@@ -143,7 +143,7 @@ function whenClicked(){
 
    var props = $(this)[0].feature.properties;
    console.log(props);
-   $("#straatlabel").html('<h2><a target="_blank" href="' + props['wdid'] + '">' + props['label'] + '</a></h2>');
+   $("#straatlabel").html('<h2><a target="_blank" href="../straat/?wdid=' + props['wdid'] + '">' + props['label'] + '</a></h2>');
 
    if(props['count'] == 1){
       $("#aantal").html('is afgebeeld op <strong>' + props['count'] + '</strong> afbeelding');
