@@ -48,6 +48,15 @@ a{
 .container-fluid{
 	padding: 20px;
 }
+
+#straatlinks{
+	text-align: right;
+}
+#straatlinks img{
+	margin-left: 15px;
+	height: 80px;
+	float: right;
+}
 #pandinfo{
 	display: none;
 }

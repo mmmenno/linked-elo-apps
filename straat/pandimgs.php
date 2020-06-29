@@ -20,6 +20,7 @@ SELECT ?item (SAMPLE(?imgurl) AS ?imgurl) ?shownat ?date WHERE {
   	?aggr edm:aggregatedCHO ?item .
   	?aggr edm:isShownBy ?imgurl .
   	?aggr edm:isShownAt ?shownat .
+  	MINUS {?aggr edm:isShownBy <https://images.memorix.nl/lei/thumb/1000x1000/.jpg> }
 }
 GROUP BY ?item ?shownat ?date
 ORDER BY DESC(?date)

@@ -11,13 +11,32 @@ if(isset($_GET['wdid'])){
 
 
 $sparql = "
-SELECT ?item ?itemLabel ?itemDescription ?bagid (SAMPLE(?coords) AS ?coords) WHERE{
+SELECT ?item ?itemLabel ?itemDescription ?bagid (SAMPLE(?coords) AS ?coords)
+        ?precision ?date ?alt ?vernoeming ?vernoemingLabel ?vernoemingafb ?vernoemingarticle WHERE{
     VALUES ?item { wd:" . $wdid . " }
     ?item wdt:P625 ?coords .
     ?item wdt:P5207 ?bagid .
+    OPTIONAL{
+        ?item p:P571/psv:P571 ?date_node . 
+        ?date_node wikibase:timePrecision ?precision . 
+        ?date_node wikibase:timeValue ?date 
+    }
+    OPTIONAL{
+      ?item skos:altLabel ?alt .
+    }
+    OPTIONAL{
+      ?item wdt:P138 ?vernoeming .
+      OPTIONAL{
+         ?vernoeming wdt:P18 ?vernoemingafb .  
+      }
+      OPTIONAL{
+        ?vernoemingarticle schema:about ?vernoeming .
+        ?vernoemingarticle schema:isPartOf <https://nl.wikipedia.org/> .
+      }
+    }
     SERVICE wikibase:label { bd:serviceParam wikibase:language \"nl,en\". }
 }
-GROUP BY ?item ?itemLabel ?itemDescription ?bagid
+GROUP BY ?item ?itemLabel ?itemDescription ?bagid ?precision ?date ?date_node ?alt ?vernoeming ?vernoemingLabel ?vernoemingafb ?vernoemingarticle
 ";
 
 
@@ -26,9 +45,38 @@ $response = getSparqlResults($endpoint,$sparql);
 
 $data = json_decode($response,true);
 $straat = $data['results']['bindings'][0];
+
 $wkt = $straat['coords']['value'];
 $coords = str_replace(array("Point(",")"), "", $wkt);
 $latlon = explode(" ", $coords);
+
+$namedAfter = "";
+if(strlen($straat['vernoemingLabel']['value'])){
+    if(strlen($straat['vernoemingafb']['value'])){
+        $namedAfter .= "<img src=\"" . $straat['vernoemingafb']['value'] . "?width=200px\" />";
+    }
+    if(strlen($straat['vernoemingarticle']['value'])){
+        $namelink = $straat['vernoemingarticle']['value'];
+    }else{
+        $namelink = $straat['vernoeming']['value'];
+    }
+    $namedAfter .= "vernoemd naar:<br /><a href=\"" . $namelink . "\">" . $straat['vernoemingLabel']['value'] . "</a>";
+}
+
+if(strlen($straat['date']['value'])){
+    $aanleg = "aanleg omstreeks ";
+    if($straat['precision']['value']=="9"){
+        $aanleg .= substr($straat['date']['value'],0,4);
+    }elseif($straat['precision']['value']=="8"){
+        $aanleg .= substr($straat['date']['value'],0,3) . "0's";
+    }elseif($straat['precision']['value']=="7"){
+        $eeuw = (int)substr($straat['date']['value'],0,2);
+        $eeuw = $eeuw+1;
+        $aanleg .= $eeuw . "ste eeuw";
+    }else{
+        $aanleg .= substr($straat['date']['value'],0,10);
+    }
+}
 
 
 
@@ -57,7 +105,15 @@ $latlon = explode(" ", $coords);
 <body>
 
 <div id="streetinfo" class="container-fluid">
-    <h1><a href="index.php?wdid=<?= $wdid ?>"><?= $straat['itemLabel']['value'] ?></a></h1>
+    <div class="row">
+        <div id="straatnaam" class="col-md-6">
+            <h1><a href="index.php?wdid=<?= $wdid ?>"><?= $straat['itemLabel']['value'] ?></a></h1>
+            <?= $aanleg ?>
+        </div>
+        <div id="straatlinks" class="col-md-6">
+            <?= $namedAfter ?>
+        </div>
+    </div>
 </div>
 
 <div id="bigmap"></div>
@@ -198,8 +254,13 @@ function getOpacity(props) {
 
 function whenClicked(){
 
-    var props = $(this)[0].feature.properties;
     $("#imgs").html('');
+    $("#pandnaam").html('');
+    $("#pandlinks").html('');
+    $("#pandimg").html('');
+
+    var props = $(this)[0].feature.properties;
+
     $("#imgs").load("pandimgs.php?bagid=" + props['pandid']);
 
     $("#pandinfo").show();
@@ -216,6 +277,9 @@ function whenClicked(){
         if (typeof props['wd']['rm'] !== 'undefined') {
             links += 'Rijksmonument: <a href="https://monumentenregister.cultureelerfgoed.nl/monumenten/' + props['wd']['rm'] + '">' + props['wd']['rm'] + '</a><br />';
         }
+        if (typeof props['wd']['wp'] !== 'undefined' && props['wd']['wp'] !== null) {
+            links += 'Wikipedia: <a href="' + props['wd']['wp'] + '">' + props['wd']['wp'] + '</a><br />';
+        }
     }
     var info = 'Bouwjaar: ' + props['bouwjaar'];
     $("#pandnaam").html('<h2>' + kop + '</h2>' + info);
@@ -229,15 +293,7 @@ function whenClicked(){
     $("#pandimg").html(img);
 
     console.log(props);
-    $("#straatlabel").html('<h2><a target="_blank" href="' + props['wdid'] + '">' + props['label'] + '</a></h2>');
-
-    if(props['count'] == 1){
-        $("#aantal").html('is afgebeeld op <strong>' + props['count'] + '</strong> afbeelding');
-    }else if(props['count'] != null){
-        $("#aantal").html('is afgebeeld op <strong>' + props['count'] + '</strong> afbeeldingen');
-    }else{
-        $("#aantal").html('');
-    }
+    
 }
 
 </script>

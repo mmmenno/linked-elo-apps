@@ -39,7 +39,7 @@ $pdokdata = json_decode($response,true);
 
 // STEP 2: ALL BAGBUILDINGS KNOWN TO WIKIDATA
 $sparql = "
-SELECT DISTINCT ?item ?itemLabel ?itemDescription ?bagid ?rm ?afb
+SELECT DISTINCT ?item ?itemLabel ?itemDescription ?bagid ?rm ?afb ?pandarticle
 WHERE {
 	VALUES ?bagid { ";
 
@@ -56,6 +56,10 @@ $sparql .="
 	OPTIONAL{
       ?item wdt:P18 ?afb .
     }
+	OPTIONAL{
+		?pandarticle schema:about ?item .
+		?pandarticle schema:isPartOf <https://nl.wikipedia.org/> .
+	}
 	SERVICE wikibase:label { bd:serviceParam wikibase:language \"nl,en\". }
 }
 limit 1000";
@@ -72,7 +76,8 @@ foreach ($wikidata['results']['bindings'] as $k => $v) {
 		"itemLabel" => $v['itemLabel']['value'],
 		"itemDescription" => $v['itemDescription']['value'],
 		"rm" => $v['rm']['value'],
-		"afb" => $v['afb']['value']
+		"afb" => $v['afb']['value'],
+		"wp" => $v['pandarticle']['value']
 	);
 }
 

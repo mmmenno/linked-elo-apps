@@ -20,6 +20,7 @@ SELECT ?item (SAMPLE(?imgurl) AS ?imgurl) ?shownat ?date WHERE {
   	?aggr edm:aggregatedCHO ?item .
   	?aggr edm:isShownBy ?imgurl .
   	?aggr edm:isShownAt ?shownat .
+  	MINUS {?aggr edm:isShownBy <https://images.memorix.nl/lei/thumb/1000x1000/.jpg> }
 }
 GROUP BY ?item ?shownat ?date
 ORDER BY DESC(?date)
@@ -40,6 +41,8 @@ if($max>500){
 }
 
 for($i=0; $i<$max; $i++) {
-	echo '<img src="' . str_replace("1000x1000","200x200",$imgs[$i]['imgurl']['value']) . '" title="datum: ' . $imgs[$i]['date']['value'] . '" />';
+	echo '<a href="' . $imgs[$i]['shownat']['value'] . '">';
+	echo '<img src="' . str_replace("1000x1000","500x500",$imgs[$i]['imgurl']['value']) . '" title="datum: ' . $imgs[$i]['date']['value'] . '" />';
+	echo '</a>';
 }
 
