@@ -23,7 +23,7 @@ SELECT ?item (SAMPLE(?imgurl) AS ?imgurl) ?shownat ?date WHERE {
   	MINUS {?aggr edm:isShownBy <https://images.memorix.nl/lei/thumb/1000x1000/.jpg> }
 }
 GROUP BY ?item ?shownat ?date
-ORDER BY DESC(?date)
+ORDER BY ASC(?date)
 LIMIT 2000
 ";
 
