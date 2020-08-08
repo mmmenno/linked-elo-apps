@@ -30,12 +30,14 @@ GROUP BY ?pand ?wkt ?bouwjaar
 limit 1000
 ";
 
-$endpoint = 'https://data.pdok.nl/sparql';
+//$endpoint = 'https://data.pdok.nl/sparql';
+$endpoint = 'https://bag.basisregistraties.overheid.nl/sparql/now';
 
 $response = getSparqlResults($endpoint,$sparql);
 
 $pdokdata = json_decode($response,true);
 
+//echo "bag done\n";
 
 // STEP 2: ALL BAGBUILDINGS KNOWN TO WIKIDATA
 $sparql = "
@@ -82,6 +84,8 @@ foreach ($wikidata['results']['bindings'] as $k => $v) {
 }
 
 
+//echo "wikidata done\n";
+
 // STEP 3: ALL BAGBUILDINGS WITH IMAGES
 $sparql = "
 PREFIX dct: <http://purl.org/dc/terms/>
@@ -108,6 +112,9 @@ $endpoint = 'http://blazegraph.pre.csuc.cat/sparql';
 
 $response = getSparqlResults($endpoint,$sparql);
 $elodata = json_decode($response,true);
+
+
+//echo "echoes done\n";
 
 
 $elopanden = array();

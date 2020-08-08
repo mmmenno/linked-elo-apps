@@ -107,6 +107,7 @@ if(strlen($straat['date']['value'])){
 <div id="streetinfo" class="container-fluid">
     <div class="row">
         <div id="straatnaam" class="col-md-6">
+            <div style="float: right;" class="loader maploader"></div>
             <h1><a href="index.php?wdid=<?= $wdid ?>"><?= $straat['itemLabel']['value'] ?></a></h1>
             <?= $aanleg ?>
         </div>
@@ -134,17 +135,16 @@ if(strlen($straat['date']['value'])){
 
 
 <div id="imgs" class="container-fluid">
-    
+    <div class="loader"></div>
 </div>
 
 
 <script>
 
 $(document).ready(function() {
+    $("#imgs").load("straatimgs.php?wdid=<?= $wdid ?>");
     createMap();
     refreshMap();
-
-    $("#imgs").load("straatimgs.php?wdid=<?= $wdid ?>");
 });
 
 function createMap(){
@@ -207,6 +207,9 @@ function refreshMap(){
         }).addTo(map);
 
         streets.addData(jsonData).bringToFront();
+
+
+        $(".maploader").hide();
 
         //map.fitBounds(streets.getBounds());
         //$('#straatinfo').html('');
@@ -292,7 +295,7 @@ function whenClicked(){
     }
     $("#pandimg").html(img);
 
-    console.log(props);
+    //console.log(props);
     
 }
 
