@@ -63,7 +63,7 @@ if(!file_exists(__DIR__ . "/straten.geojson") || isset($_GET['uncache'])){
         position: 'bottomright'
     }).addTo(map);
 
-    L.tileLayer('https://{s}.basemaps.cartocdn.com/dark_nolabels/{z}/{x}/{y}{r}.png', {
+    L.tileLayer('https://{s}.basemaps.cartocdn.com/rastertiles/light_nolabels/{z}/{x}/{y}.png', {
       attribution: '&copy; <a href="https://www.openstreetmap.org/copyright">OpenStreetMap</a> contributors &copy; <a href="https://carto.com/attributions">CARTO</a>',
       subdomains: 'abcd',
       maxZoom: 19
@@ -127,7 +127,27 @@ if(!file_exists(__DIR__ . "/straten.geojson") || isset($_GET['uncache'])){
                       4 ; //2
   }
 
+/*
+#5c0f3d
+#7c1843
+#
+#b93843
+#d34e3c
+#e86932
+#f78622
+#ffa600
+*/
   function getColor(d) {
+    return d > 700 ? '#5c0f3d' :
+             d > 300 ? '#7c1843' :
+             d > 100  ? '#9c2545' :
+             d > 50  ? '#b93843' :
+             d > 20  ? '#d34e3c' :
+             d > 8  ? '#e86932' :
+             d > 3   ? '#f78622' :
+                       '#ffa600';
+  }
+  function getOldColor(d) {
     return d > 700 ? '#a50026' :
              d > 300 ? '#f46d43' :
              d > 100  ? '#fdae61' :

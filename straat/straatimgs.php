@@ -4,7 +4,6 @@
 
 include("../functions.php");
 
-// STEP 1: ALL BUILDINGS IN THIS STREET FROM BAG
 $sparql = "
 PREFIX dct: <http://purl.org/dc/terms/>
 PREFIX rdf: <http://www.w3.org/1999/02/22-rdf-syntax-ns#>

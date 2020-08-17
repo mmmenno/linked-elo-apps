@@ -3,8 +3,8 @@ html, body{
 	margin:0;
 	padding-top: 0;
 	font-size: 14px;
-	background-color: #000;
-	color: #ccc;
+	background-color: #E9EFEA;
+	color: #484848;
 	height: 100%;
 	font-family: sans-serif;
 }
@@ -15,7 +15,7 @@ html, body{
 		height: 60%;
 	}
 	#legenda{
-		background-color: #000;
+		background-color: #E9EFEA;
 		padding: 20px;
 		position: static;
 	}
@@ -32,9 +32,9 @@ html, body{
 		right: 0;
 		top: 0;
 		width: 250px;
-		background-color: #000;
-		border-left: 4px solid #686F6E;
-		border-bottom: 4px solid #686F6E;
+		background-color: #E9EFEA;
+		border-left: 4px solid #D4DADC;
+		border-bottom: 4px solid #D4DADC;
 		padding: 20px;
 	}
 }
@@ -76,8 +76,8 @@ form{
 	margin-top: 30px;
 }
 a{
-	color: #fff;
-	text-decoration: none;
+	color: #000;
+	text-decoration: underline;
 }
 .leaflet-left .leaflet-control{
 	margin-top: 10px;
