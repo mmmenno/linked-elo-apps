@@ -38,7 +38,8 @@ ORDER BY ?begin ?item
 LIMIT 800";
 
 
-$endpoint = 'https://api.druid.datalegend.net/datasets/menno/elo/services/elo/sparql';
+//$endpoint = 'https://api.druid.datalegend.net/datasets/menno/elo/services/elo/sparql';
+$endpoint = 'http://blazegraph.pre.csuc.cat/sparql';
 
 $json = getSparqlResults($endpoint,$sparql);
 $data = json_decode($json,true);
