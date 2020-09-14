@@ -26,6 +26,9 @@ SELECT DISTINCT ?item ?label ?place ?placelabel ?eventtype ?typelabel ?begin ?en
   rdfs:label ?placelabel .
 ?eventtype rdfs:label ?typelabel .
 ?cho dc:subject ?item .
+?aggr edm:aggregatedCHO ?cho .
+?aggr edm:isShownBy ?imgurl .
+FILTER (STR(?imgurl) != \"https://images.memorix.nl/lei/thumb/1000x1000/.jpg\") .
 MINUS { ?cho dc:type <http://vocab.getty.edu/aat/300263837> }
 } 
 GROUP BY ?item ?label ?place ?placelabel ?eventtype ?typelabel ?begin ?end ?wkt
@@ -33,7 +36,8 @@ ORDER BY ?begin ?item
 LIMIT 1000";
 
 
-$endpoint = 'https://api.druid.datalegend.net/datasets/menno/elo/services/elo/sparql';
+//$endpoint = 'https://api.druid.datalegend.net/datasets/menno/elo/services/elo/sparql';
+$endpoint = 'http://blazegraph.pre.csuc.cat/sparql';
 
 $json = getSparqlResults($endpoint,$sparql);
 $data = json_decode($json,true);
