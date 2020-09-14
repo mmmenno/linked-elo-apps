@@ -22,7 +22,7 @@ PREFIX rdf: <http://www.w3.org/1999/02/22-rdf-syntax-ns#>
 PREFIX rdfs: <http://www.w3.org/2000/01/rdf-schema#>
 PREFIX sem: <http://semanticweb.cs.vu.nl/2009/11/sem/>
 PREFIX dbo: <http://dbpedia.org/ontology/>
-SELECT DISTINCT ?item ?label ?place ?placelabel ?typelabel ?begin ?end ?cho ?actor ?actorlabel ?actorwiki ?actordescription WHERE {
+SELECT DISTINCT ?item ?label ?place ?placelabel ?typelabel ?begin ?end ?cho ?title ?imgurl ?imglink ?actor ?actorlabel ?actorwiki ?actordescription WHERE {
 VALUES ?item {<" . $eventuri . ">}
 ?item a sem:Event ;
 	sem:eventType ?eventtype ;
@@ -41,6 +41,11 @@ OPTIONAL{
     }
 }
 ?cho dc:subject ?item .
+?cho dc:title ?title .
+?aggr edm:aggregatedCHO ?cho .
+?aggr edm:isShownBy ?imgurl .
+?aggr edm:isShownAt ?imglink .
+FILTER (STR(?imgurl) != \"https://images.memorix.nl/lei/thumb/1000x1000/.jpg\")
 }
 ORDER BY ?begin 
 LIMIT 100
@@ -48,7 +53,9 @@ LIMIT 100
 
 //echo $sparql;
 
-$endpoint = 'https://api.druid.datalegend.net/datasets/menno/elo/services/elo/sparql';
+//$endpoint = 'https://api.druid.datalegend.net/datasets/menno/elo/services/elo/sparql';
+$endpoint = 'http://blazegraph.pre.csuc.cat/sparql';
+
 $json = getSparqlResults($endpoint,$sparql);
 $data = json_decode($json,true);
 
@@ -56,12 +63,9 @@ $data = json_decode($json,true);
 $actors = array();
 $beenthereactors = array();
 $imgs = array();
+$beenthereimgs = array();
 
 foreach ($data['results']['bindings'] as $k => $v) {
-
-	if(!in_array($v['cho']['value'], $imgs)){
-		$imgs[] = $v['cho']['value'];
-	}
 
 	if(!in_array($v['actor']['value'], $beenthereactors) && strlen($v['actor']['value'])){
 		$actors[] = array(
@@ -72,49 +76,10 @@ foreach ($data['results']['bindings'] as $k => $v) {
 		);
 		$beenthereactors[] = $v['actor']['value'];
 	}
-}
-
-// then get images from echoes endpoint
-$valuesstring = "";
-foreach ($imgs as $key => $value) {
-	$valuesstring .= "<" . $value . "> ";
-}
-
-$sparql = "
-PREFIX dct: <http://purl.org/dc/terms/>
-PREFIX rdfs: <http://www.w3.org/2000/01/rdf-schema#>
-PREFIX dc: <http://purl.org/dc/elements/1.1/>
-PREFIX rdf: <http://www.w3.org/1999/02/22-rdf-syntax-ns#>
-PREFIX edm: <http://www.europeana.eu/schemas/edm/>
-
-select distinct ?cho ?imglink ?imgurl ?title where { 
-    VALUES ?cho  { " . $valuesstring . " }
-    ?cho dc:title ?title .
-    ?aggr edm:aggregatedCHO ?cho .
-    ?aggr edm:isShownBy ?imgurl .
-    ?aggr edm:isShownAt ?imglink .
-} 
-";
-
-
-$endpoint = 'http://blazegraph.pre.csuc.cat/sparql';
-$response = getSparqlResults($endpoint,$sparql);
-
-$data = json_decode($response,true);
-
-
-
-
-
-
-//print_r($data);
-$imgs = array();
-$beenthereimgs = array();
-
-foreach ($data['results']['bindings'] as $k => $v) {
 
 	if(!in_array($v['cho']['value'], $beenthereimgs)){
 		$imgs[] = array(
+			"cho" => $v['cho']['value'],
 			"imgurl" => $v['imgurl']['value'],
 			"imgtitle" => str_replace(array("\"","'"),"`",$v['title']['value']),
 			"imgcreator" => $v['creator']['value'],
@@ -122,8 +87,8 @@ foreach ($data['results']['bindings'] as $k => $v) {
 		);
 		$beenthereimgs[] = $v['cho']['value'];
 	}
-
 }
+
 
 //print_r($imgs);
 

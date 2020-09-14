@@ -32,6 +32,9 @@ SELECT DISTINCT ?item ?label ?place ?placelabel ?eventtype ?typelabel ?begin ?en
 ?place rdfs:label ?placelabel .
 ?eventtype rdfs:label ?typelabel .
 ?cho dc:subject ?item .
+?aggr edm:aggregatedCHO ?cho .
+?aggr edm:isShownBy ?imgurl .
+FILTER (STR(?imgurl) != \"https://images.memorix.nl/lei/thumb/1000x1000/.jpg\")
 } 
 GROUP BY ?item ?label ?place ?placelabel ?eventtype ?typelabel ?begin ?end
 ORDER BY ?begin ?item 
