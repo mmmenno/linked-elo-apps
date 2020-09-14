@@ -115,7 +115,7 @@ asort($eventtypes);
 <div class="container-fluid">
     <div class="row">
       <div class="col-md-12">
-         <h1>Er gebeurt van alles in Leiden</h1>
+         <h1>Er gebeurt van alles in Leiden en omstreken</h1>
       </div> 
     </div>
 
